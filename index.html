@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculator</title>
+        <meta charset="UTF-8">
+        <style>
+            #screen {
+                grid-column-start: span 5;                
+                background-color: #ddd;
+                text-align: right;
+                font-size: 60px;
+                font-family: monospace;
+            }
+            p {
+                border: 1px solid gray;
+                margin: 0px;
+                height: 100%;
+                line-height: 100px;
+                max-width: 100%;
+            }
+            #buttonDel {
+                background-color: #ff4444;
+            }
+            #buttonClear {
+                background-color: #33ff33;
+            }
+            
+            #buttonEquals {
+                grid-column-start: span 2;
+                background-color: #ddd;
+            }
+            .calcBody {
+                width: 400px;
+                height: 500px;
+                border: 3px solid black;
+                display: grid;
+                grid-template-rows: repeat(5, 1fr);
+                grid-template-columns: repeat(5, 1fr);
+                column-gap: 5px;
+                row-gap: 5px;
+                padding: 15px;
+                background-color: #333;
+                border-radius: 10px;
+            }
+            .button {
+                border-radius: 5px;
+                background-color: white;
+                font-size: 30px;
+                font-family: monospace;
+                border: none;
+                padding: none;
+            }
+            .operationButton {
+                background-color: orange;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="calcBody">
+            <div id="screen">
+                <p>0</p>
+            </div>
+            <button class="button" id="button7">7</button>
+            <button class="button" id="button8">8</button>
+            <button class="button" id="button9">9</button>
+            <button class="button" id="buttonClear">C</button>
+            <button class="button" id="buttonDel">DEL</button>
+            <button class="button" id="button4">4</button>
+            <button class="button" id="button5">5</button>
+            <button class="button" id="button6">6</button>
+            <button class="button operationButton" id="buttonMult">x</button>
+            <button class="button operationButton" id="buttonDiv">/</button>
+            <button class="button" id="button1">1</button>
+            <button class="button" id="button2">2</button>
+            <button class="button" id="button3">3</button>
+            <button class="button operationButton" id="buttonPlus">+</button>
+            <button class="button operationButton" id="buttonSub">-</button>
+            <button class="button" id="buttonNeg">+/-</button>
+            <button class="button" id="button0">0</button>
+            <button class="button" id="buttonDecimal">.</button>
+            <button class="button" id="buttonEquals">=</button>
+
+
+        </div>
+
+        <script>
+
+            let displayValue = "";
+
+            function operate(num1, num2, operator) {
+                switch(operator) {
+                    case "+":
+                        return add(num1, num2);
+                    case "-":
+                        return subtract(num1, num2);
+                    case "*":
+                        return multiply(num1, num2);
+                    case "/":
+                        return divide(num1, num2);
+                }
+            }
+            function add (a, b) {
+                return a + b;
+            }
+            function subtract (a, b) {
+                return a - b;
+            }
+            function multiply (a, b) {
+                return a * b;
+            }
+            function divide (a, b) {
+                return a / b;
+            }
+
+            function addToScreen(e) {                
+                displayValue += e.target.innerHTML;
+                screen.innerHTML = displayValue;
+            }
+
+            const screen = document.getElementById("screen").children[0];
+            const button1 = document.getElementById("button1");
+            const button2 = document.getElementById("button2");
+            const button3 = document.getElementById("button3");
+            const button4 = document.getElementById("button4");
+            const button5 = document.getElementById("button5");
+            const button6 = document.getElementById("button6");
+            const button7 = document.getElementById("button7");
+            const button8 = document.getElementById("button8");
+            const button9 = document.getElementById("button9");
+            const button0 = document.getElementById("button0");
+            const buttonDecimal = document.getElementById("buttonDecimal");
+            button1.addEventListener("click", addToScreen);
+            button2.addEventListener("click", addToScreen);
+            button3.addEventListener("click", addToScreen);
+            button4.addEventListener("click", addToScreen);
+            button5.addEventListener("click", addToScreen);
+            button6.addEventListener("click", addToScreen);
+            button7.addEventListener("click", addToScreen);
+            button8.addEventListener("click", addToScreen);
+            button9.addEventListener("click", addToScreen);
+            button0.addEventListener("click", addToScreen);
+            buttonDecimal.addEventListener("click", addToScreen);
+        </script>
+    </body>
+</html>
