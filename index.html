@@ -140,6 +140,9 @@
                 }
                 if (displayValue == "0") {
                     displayValue = e.target.innerHTML;
+                } else if (displayValue == "-0") {
+                    displayValue = "-" + e.target.innerHTML;
+                    console.log(displayValue);                
                 } else {              
                     displayValue += e.target.innerHTML;
                 }
@@ -149,6 +152,9 @@
             function updateScreen(value) {
                 if (value == ".") {
                     value = "0.";
+                    displayValue = value;
+                } else if (value == "-.") {
+                    value = "-0.";
                     displayValue = value;
                 }
                 if (isNaN(value)) {
