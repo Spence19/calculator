@@ -27,7 +27,7 @@
             
             #buttonEquals {
                 grid-column-start: span 2;
-                background-color: #ddd;
+                background-color: #ccc;
             }
             .calcBody {
                 width: 400px;
@@ -41,6 +41,7 @@
                 padding: 15px;
                 background-color: #333;
                 border-radius: 10px;
+                margin: auto;
             }
             .button {
                 border-radius: 5px;
@@ -49,9 +50,18 @@
                 font-family: monospace;
                 border: none;
                 padding: none;
+                color: #000;
             }
             .operationButton {
                 background-color: orange;
+            }
+
+            .button:hover {
+                opacity: 0.9;
+            }
+
+            .button:active {
+                opacity: 0.6;
             }
         </style>
     </head>
@@ -86,18 +96,22 @@
 
         <script>
 
-            let displayValue = "";
+            let displayValue = "0";
+            let tempValue = "0";
+            let operator = "";
 
-            function operate(num1, num2, operator) {
+            function operate() {
+                let num1 = parseFloat(tempValue);
+                let num2 = parseFloat(displayValue);                
                 switch(operator) {
                     case "+":
-                        return add(num1, num2);
+                        return round(add(num1, num2));
                     case "-":
-                        return subtract(num1, num2);
-                    case "*":
-                        return multiply(num1, num2);
+                        return round(subtract(num1, num2));
+                    case "x":
+                        return round(multiply(num1, num2));
                     case "/":
-                        return divide(num1, num2);
+                        return round(divide(num1, num2));
                 }
             }
             function add (a, b) {
@@ -110,12 +124,125 @@
                 return a * b;
             }
             function divide (a, b) {
+                if (b == 0) {
+                    return "ERROR";
+                }
                 return a / b;
             }
 
-            function addToScreen(e) {                
-                displayValue += e.target.innerHTML;
-                screen.innerHTML = displayValue;
+            function numPress(e) {
+                //max digits on screen is 11 (10 and a neg sign)  
+                if (displayValue.length > 9) {
+                    return;
+                }
+                if (checkDecimal(displayValue) && e.target.innerHTML == ".") {
+                    return;
+                }
+                if (displayValue == "0") {
+                    displayValue = e.target.innerHTML;
+                } else {              
+                    displayValue += e.target.innerHTML;
+                }
+                updateScreen(displayValue);
+            }
+
+            function updateScreen(value) {
+                if (value == ".") {
+                    value = "0.";
+                    displayValue = value;
+                }
+                if (isNaN(value)) {
+                    //console.log(value);
+                    screen.innerHTML = "ERROR";
+                } else {
+                    screen.innerHTML = value;
+                }
+            }
+            
+            function opPress(e) {
+                if (operator == "=") {
+                    operator = e.target.innerHTML;
+                    tempValue = displayValue;
+                } else if (operator != "") {
+                    tempValue = operate();
+                    operator = e.target.innerHTML;
+                } else {
+                    operator = e.target.innerHTML;
+                    tempValue = displayValue;
+                }
+                displayValue = "0";
+                updateScreen(tempValue);                
+            }
+
+            function equals() {
+                if (operator == "" || operator == "=") {
+                    return;
+                }
+                updateScreen(operate());
+                tempValue = "0";
+                displayValue = "0";
+                operator = "=";
+            }
+
+            function clear() {
+                displayValue = "0";
+                tempValue = "0";
+                operator = "";
+                updateScreen(displayValue);
+            }
+
+            function del() {
+                if (operator == "=") {
+                    return;
+                }
+                displayValue = String(displayValue).slice(0, -1);
+                if (displayValue.length == 0) {
+                    updateScreen("0");
+                } else {
+                    updateScreen(displayValue);
+                }
+            }
+
+            function neg() {
+                if (displayValue.length > 10) {
+                    return;
+                }
+                if (displayValue[0] != "-") {
+                    displayValue = "-" + displayValue;
+                } else if (displayValue[0] == "-") {
+                    displayValue = String(displayValue).slice(1);
+                }
+                updateScreen(displayValue);
+            }
+
+            function round(value) {
+                if (value > 9999999999 || value < -9999999999) {
+                    return "ERROR";
+                } else if (String(value).length > 11) {
+                    let decLocation = String(value).indexOf(".");
+                    if (String(value)[0] == "-") {
+                        return removeEndZeros(value.toFixed(10 - decLocation));
+                    } else {
+                        return removeEndZeros(value.toFixed(9 - decLocation));
+                    }
+                } else {
+                    return value;
+                }
+            }
+
+            function checkDecimal(value) {
+                if (String(value).indexOf(".") == -1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function removeEndZeros(value) {
+                while (value[value.length - 1] == 0) {
+                    value = value.slice(0, -1);
+                }
+                return value;
             }
 
             const screen = document.getElementById("screen").children[0];
@@ -130,17 +257,33 @@
             const button9 = document.getElementById("button9");
             const button0 = document.getElementById("button0");
             const buttonDecimal = document.getElementById("buttonDecimal");
-            button1.addEventListener("click", addToScreen);
-            button2.addEventListener("click", addToScreen);
-            button3.addEventListener("click", addToScreen);
-            button4.addEventListener("click", addToScreen);
-            button5.addEventListener("click", addToScreen);
-            button6.addEventListener("click", addToScreen);
-            button7.addEventListener("click", addToScreen);
-            button8.addEventListener("click", addToScreen);
-            button9.addEventListener("click", addToScreen);
-            button0.addEventListener("click", addToScreen);
-            buttonDecimal.addEventListener("click", addToScreen);
+            const buttonPlus = document.getElementById("buttonPlus");
+            const buttonSub = document.getElementById("buttonSub");
+            const buttonMult = document.getElementById("buttonMult");
+            const buttonDiv = document.getElementById("buttonDiv");
+            const buttonEquals = document.getElementById("buttonEquals");
+            const buttonClear = document.getElementById("buttonClear");
+            const buttonDel = document.getElementById("buttonDel");
+            const buttonNeg = document.getElementById("buttonNeg");
+            button1.addEventListener("click", numPress);
+            button2.addEventListener("click", numPress);
+            button3.addEventListener("click", numPress);
+            button4.addEventListener("click", numPress);
+            button5.addEventListener("click", numPress);
+            button6.addEventListener("click", numPress);
+            button7.addEventListener("click", numPress);
+            button8.addEventListener("click", numPress);
+            button9.addEventListener("click", numPress);
+            button0.addEventListener("click", numPress);
+            buttonDecimal.addEventListener("click", numPress);
+            buttonPlus.addEventListener("click", opPress);
+            buttonSub.addEventListener("click", opPress);
+            buttonMult.addEventListener("click", opPress);
+            buttonDiv.addEventListener("click", opPress);
+            buttonEquals.addEventListener("click", equals);
+            buttonClear.addEventListener("click", clear);
+            buttonDel.addEventListener("click", del);
+            buttonNeg.addEventListener("click", neg);
         </script>
     </body>
 </html>
